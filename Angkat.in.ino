@@ -17,7 +17,7 @@ char *geeknesia_deviceid = "device-09f85271890c5e663c33a7c32f36d3fd";
 char *geeknesia_credential = "a164e6d01152d74ead3732d2dde45ade:864c9c7229f711a6be40568ea2982df1";
 int lampu = 13;
 int buzz = 6;
-int itemp = 95;
+int itemp = 0;
 int sCahaya = A0;
 int tCahaya = 0;
 int gCahaya = 0;
@@ -46,12 +46,6 @@ void callback(char *topic, byte *payload, unsigned int length) {
     if (msgString.equals("off")) {
         Serial.println("OFF");
         digitalWrite(lampu, LOW);
-    }
-    if (msgString.equals("auto")) {
-
-    }
-    if (msgString.equals("manual")) {
-
     }
 }
 
@@ -111,47 +105,27 @@ void loop() {
     if (tCahaya < 80) {
         digitalWrite(lampu, HIGH);
         if (tLooping == 0) {
-            for (gCahaya = itemp; gCahaya <= 95; gCahaya++) {
-                tCahaya = analogRead(sCahaya);
-                if (tCahaya < 80) {
-                    gJemuran.write(gCahaya);
-                    delay(5);
-                    Serial.println(gCahaya);
-                } else {
-                    Serial.println(gCahaya);
-                    itemp = gCahaya;
-                    gCahaya = 96;
-                    /*tLooping = 1;
-                    t2Looping = 0;*/
-                }
+            for (gCahaya = 0; gCahaya <= 95; gCahaya++) {
+                gJemuran.write(gCahaya);
+                delay(5);
             }
             tone(buzz, 900, 50);
             mendung += 1;
         }
-        /*tLooping = 1;
-        t2Looping = 0;*/
+        tLooping = 1;
+        t2Looping = 0;
     } else {
         digitalWrite(lampu, LOW);
         if (t2Looping == 0) {
-            for (gCahaya = itemp; gCahaya >= 0; gCahaya--) {
-                tCahaya = analogRead(sCahaya);
-                if (tCahaya > 80) {
-                    Serial.println(gCahaya);
-                    gJemuran.write(gCahaya);
-                    delay(5);
-                } else {
-                    Serial.println(gCahaya);
-                    itemp = gCahaya;
-                    gCahaya = -1;
-                    /*t2Looping = 1;
-                    tLooping = 0;*/
-                }
+            for (gCahaya = 95; gCahaya >= 0; gCahaya--) {
+                gJemuran.write(gCahaya);
+                delay(5);
             }
             tone(buzz, 700, 50);
             cerah += 1;
         }
-        /*t2Looping = 1;
-        tLooping = 0;*/
+        t2Looping = 1;
+        tLooping = 0;
     }
     Serial.println("=============================");
     Serial.print(">> Cerah           = ");
@@ -165,5 +139,5 @@ void loop() {
     Serial.print(" kali\n>> Cahaya          = ");
     Serial.print(tCahaya);
     Serial.println(" Cd\n=============================\n");
-    /*delay(1000);*/
+    delay(1000);
 }
